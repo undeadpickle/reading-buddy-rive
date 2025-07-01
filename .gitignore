@@ -65,6 +65,7 @@ jspm_packages/
 # Temporary folders
 tmp/
 temp/
+screenshots/
 
 # Editor backup files
 *~
