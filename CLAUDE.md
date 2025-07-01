@@ -5,6 +5,11 @@ A web-based kids' reading platform featuring an animated "Buddy System" built wi
 
 **Current Status**: ✅ **MAJOR MILESTONE ACHIEVED** - Complete Rive integration working! Kitten ninja character loads, animates, and responds to user interaction with dynamic canvas sizing.
 
+**Repository**: 🔒 Private GitHub repo at https://github.com/travisgregory/reading-buddy-rive
+- Git initialized and all code committed
+- Authentication configured with personal access token
+- Ready for collaborative development
+
 ## Documentation
 - **PRD**: `/docs/buddy_system_prd_v2.md` - Product requirements and specification
 - **README**: `/README.md` - Project overview and quick start guide
@@ -56,6 +61,15 @@ A web-based kids' reading platform featuring an animated "Buddy System" built wi
 npm run dev          # Start development server (localhost:3000)
 npm run build        # Build for production
 npm run preview      # Preview production build
+```
+
+### Git Commands
+```bash
+git status           # Check working tree status
+git add .            # Stage all changes
+git commit -m "msg"  # Commit with message
+git push             # Push to GitHub (authentication configured)
+git pull             # Pull latest changes from GitHub
 ```
 
 ### Testing & Demo
@@ -152,15 +166,25 @@ rive/
 - Parental consent gates
 
 ## Phase Roadmap
-- **✅ v0.1 Foundation (COMPLETED)**: Rive integration, kitten ninja character, wave gesture animation
-- **v0.2 (NEXT)** - Additional animations: Add idle, happy, sad gestures in Rive Editor
-- **v0.3** - State machines: Complex animation logic and transitions
-- **v0.4** - Audio integration: Voice lines synchronized with gestures
+- **✅ v0.1 Foundation (COMPLETED)**: Rive integration, kitten ninja character, wave gesture animation, GitHub setup
+- **🔄 v0.2 (IN PROGRESS)** - Character Reusability: Multi-artboard architecture for efficient character variations
+- **v0.3 (NEXT)** - Additional animations: Add idle, happy, sad gestures in Rive Editor
+- **v0.4** - State machines: Complex animation logic and transitions
+- **v0.5** - Audio integration: Voice lines synchronized with gestures
 - **v1.0** - Full buddy system: Multi-buddy unlock, accessories, analytics
 
-## 🎯 IMMEDIATE NEXT STEPS (for new Claude conversation):
-1. **Add more animations** - Create idle, happy, sad gestures in Rive Editor
-2. **Implement state machines** - Replace simple animations with complex state-driven logic
-3. **Add audio integration** - Sync voice lines with buddy gestures
-4. **Performance optimization** - Bundle size analysis and lazy loading improvements
-5. **Testing coverage** - Unit tests for Rive integration components
+## 🎯 CURRENT PRIORITY: Character Reusability Architecture
+**Goal**: Implement single .riv file with multiple artboards for 70-80% file size reduction
+**Progress**: Research completed, implementation plan approved
+**Next Steps**:
+1. **Create humanoid-buddies.riv** - Single file with multiple character artboards
+2. **Update RiveBuddy component** to support artboard switching
+3. **Enhance BuddyManager** for character variation handling
+4. **Update type definitions** for multi-character support
+5. **Performance testing** - Verify file size and switching speed improvements
+
+## Character Reusability Benefits (Research Findings)
+- **File Size**: Single 400KB file vs multiple 300KB+ files per character
+- **Performance**: Instant character switching (no network requests)
+- **Maintainability**: Shared bone structure and animations across all characters
+- **Scalability**: Easy addition of new character variations
