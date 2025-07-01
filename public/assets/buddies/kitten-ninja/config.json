@@ -1,0 +1,31 @@
+{
+  "id": "kitten-ninja",
+  "name": "Kitten Ninja",
+  "description": "A stealthy feline friend who loves reading adventures",
+  "rarity": "common",
+  "unlockRequirement": {
+    "type": "reading_streak",
+    "value": 3
+  },
+  "animations": {
+    "idle": "Idle",
+    "wave": "Wave",
+    "jump": "Jump",
+    "cheer": "Cheer",
+    "sad": "Sad"
+  },
+  "audio": {
+    "hatch": "hatch.mp3",
+    "wave": "meow-happy.mp3",
+    "cheer": "purr-celebrate.mp3",
+    "sad": "meow-sad.mp3"
+  },
+  "accessories": {
+    "slots": ["head", "body", "weapon"],
+    "defaults": {
+      "head": null,
+      "body": null,
+      "weapon": "wooden-kunai"
+    }
+  }
+}

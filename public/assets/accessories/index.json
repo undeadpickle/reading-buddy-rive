@@ -1,0 +1,40 @@
+{
+  "accessories": [
+    {
+      "id": "ninja-headband",
+      "name": "Ninja Headband",
+      "category": "head",
+      "rarity": "common",
+      "unlockRequirement": {
+        "type": "buddy_hatched",
+        "value": "kitten-ninja"
+      },
+      "asset": "hats/ninja-headband.png",
+      "description": "Classic ninja headband for stealth missions"
+    },
+    {
+      "id": "reading-glasses",
+      "name": "Reading Glasses",
+      "category": "head", 
+      "rarity": "common",
+      "unlockRequirement": {
+        "type": "books_read",
+        "value": 5
+      },
+      "asset": "glasses/reading-glasses.png",
+      "description": "Stylish glasses for the scholarly buddy"
+    },
+    {
+      "id": "wooden-kunai",
+      "name": "Wooden Kunai",
+      "category": "weapon",
+      "rarity": "common",
+      "unlockRequirement": {
+        "type": "default",
+        "value": null
+      },
+      "asset": "weapons/wooden-kunai.png",
+      "description": "A safe training weapon for young ninjas"
+    }
+  ]
+}

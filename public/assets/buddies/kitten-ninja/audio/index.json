@@ -1,0 +1,24 @@
+{
+  "audioFiles": [
+    {
+      "id": "hatch",
+      "file": "hatch.mp3",
+      "description": "Buddy hatching sound"
+    },
+    {
+      "id": "wave",
+      "file": "meow-happy.mp3", 
+      "description": "Happy meow for wave gesture"
+    },
+    {
+      "id": "cheer",
+      "file": "purr-celebrate.mp3",
+      "description": "Celebration purr"
+    },
+    {
+      "id": "sad",
+      "file": "meow-sad.mp3",
+      "description": "Sad meow"
+    }
+  ]
+}

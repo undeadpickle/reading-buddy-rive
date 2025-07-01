@@ -1,0 +1,12 @@
+{
+  "eggs": [
+    {
+      "buddyId": "kitten-ninja",
+      "eggImagePath": "/assets/eggs/kitten-ninja/egg.png",
+      "crackedImagePath": "/assets/eggs/kitten-ninja/egg-cracked.png",
+      "hatchSoundPath": "/assets/eggs/kitten-ninja/hatch.mp3",
+      "progress": 0,
+      "milestone": "Read for 3 consecutive days"
+    }
+  ]
+}
