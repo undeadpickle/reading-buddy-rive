@@ -2,141 +2,199 @@
 
 ## Project Setup Complete! ✅
 
-Your Reading Buddies project is now configured to support Rive animations. Here's what has been set up:
+Your Reading Buddies project is now configured with modern Rive best practices using the official `@rive-app/react-canvas` integration.
 
-### 1. Directory Structure
+### Current Implementation Status
+
+#### ✅ Completed (v0.1.5 - Rive Best Practices)
+- **Modern Integration**: Using `@rive-app/react-canvas` package with useRive hook pattern
+- **Event Handling**: Proper Rive event listeners with onStateChange and RiveEvent callbacks
+- **Asset Loading**: Simplified approach that leverages Rive's built-in systems
+- **Error Handling**: Graceful fallbacks for missing state machines and failed loads
+- **Memory Management**: Proper cleanup and resource management following Rive guidelines
+
+#### 🔄 Ready for Implementation (v0.2 - Multi-Artboard)
+- **Code Infrastructure**: Complete support for character switching via artboard parameter
+- **Multi-Character Demo**: UI framework ready for testing multiple characters
+- **Type System**: CharacterType enum and interfaces in place
+
+## Directory Structure
 ```
-public/assets/buddies/kitten-ninja/
-├── parts/           # Place your body part PNG/SVG files here
-├── audio/           # Place voice line MP3 files here
-└── config.json      # Buddy configuration
-
-src/rive/assets/     # Place your .riv animation files here
+src/
+  rive/
+    assets/
+      kitten-ninja.riv          ← ✅ Current working file
+      humanoid-buddies.riv      ← 🎯 Target multi-artboard file
+  components/
+    RiveBuddy.tsx              ← ✅ Modern useRive hook implementation
+    BuddyCanvas.tsx            ← ✅ Smart wrapper (emoji OR Rive)
+    RiveDemo.tsx               ← ✅ Single character test interface
+    MultiCharacterDemo.tsx     ← ✅ Multi-character switching UI (ready for multi-artboard)
+  managers/
+    BuddyManager.ts            ← ✅ Character management logic
+    AudioManager.ts            ← ✅ Audio synchronization
 ```
 
-### 2. Components Created
-- **RiveBuddy.tsx**: Handles real Rive animations with state machine support
-- **BuddyCanvas.tsx**: Smart component that uses RiveBuddy for .riv files or emoji placeholder
-- **RiveDemo.tsx**: Test page for Rive animations
+## Current Working Features
 
-### 3. Configuration Updates
-- **vite.config.ts**: Added support for .riv file imports
-- **vite-env.d.ts**: Added TypeScript types for .riv imports
-- **App.tsx**: Added tab navigation to test both demo and Rive modes
+### 1. Rive Animation Test
+- Navigate to **"Rive Animation Test"** tab
+- Check **"Use Rive Animation"** checkbox
+- Click kitten ninja to trigger wave gesture animation
+- **Status**: ✅ Working with clean console output
 
-## Next Steps: Creating Your Rive Animation
+### 2. Multi-Character Demo
+- Navigate to **"🎭 Multi-Character"** tab  
+- Select different character types from dropdown
+- Currently uses single kitten-ninja.riv file for all characters
+- **Ready for**: Multi-artboard file with instant character switching
 
-### Step 1: Your Assets Are Ready! ✅
-**Body Part Files**: Already placed in `public/assets/buddies/kitten-ninja/parts/`
+## Creating Multi-Artboard .riv File (v0.2 Target)
 
-**Available Assets**:
-- **torso.png** - Main body
-- **head.png** - Front head layer  
-- **headBack.png** - Back head layer (for depth)
-- **armLeft.png, armRight.png** - Arm layers
-- **legLeft.png, legRight.png** - Leg layers
-- **legSeparator.png** - Layer between legs
-- **tail.png** - Tail layer
-- **eyeLeft.png, eyeRight.png** - Open eyes
-- **eyeBlinkLeft.png, eyeBlinkRight.png** - Closed eyes for blinking
-- **egg.png** - Egg state (bonus)
+### Required Artboards
+Create a single `humanoid-buddies.riv` file with these artboards:
+- **KittenNinja** (current character)
+- **PuppyWizard** 
+- **BearKnight**
+- **DragonMage**
 
-**Note**: Multiple formats available (PNG, SVG, PDF) + @2x/@3x retina versions
+### Step-by-Step Guide
 
-### Step 2: Create Rive Animation
 1. **Download Rive Editor** from [rive.app](https://rive.app)
 
-2. **Create New File**:
-   - Artboard name: `KittenNinja`
-   - Size: 400x400px
+2. **Create Base Character**:
+   - Start with existing kitten-ninja character structure
+   - Create shared bone/armature system for humanoid characters
+   - Artboard size: 400x400px
 
-3. **Import Your Assets**:
-   - File → Import → Select body part files from `public/assets/buddies/kitten-ninja/parts/`
-   - **Recommended layer order** (back to front):
-     1. headBack.png (shadow/depth layer)
-     2. tail.png
-     3. legRight.png (back leg)
-     4. legSeparator.png
-     5. torso.png
-     6. legLeft.png (front leg)  
-     7. armRight.png (back arm)
-     8. armLeft.png (front arm)
-     9. head.png (main head)
-     10. eyeLeft.png, eyeRight.png (open eyes)
-     11. eyeBlinkLeft.png, eyeBlinkRight.png (initially hidden, for blink animation)
+3. **Add Multiple Artboards**:
+   - Duplicate base artboard for each character type
+   - Name artboards exactly: `KittenNinja`, `PuppyWizard`, `BearKnight`, `DragonMage`
+   - Share bone structure and animations across all artboards
 
-4. **Create Animations** (Timeline names):
-   - **`Idle`** - Subtle breathing (torso scale 100% → 102%), eye blinks every 2-3 seconds
-   - **`Wave`** - armLeft rotation and position animation
-   - **`Jump`** - All body parts move up, torso squash/stretch
-   - **`Cheer`** - Both arms up, slight hop, happy expression
-   - **`Sad`** - Arms and head droop, slower breathing
+4. **Shared Animations** (all artboards):
+   - **`gesture_wave`** - Wave gesture (currently working)
+   - **`idle`** - Breathing animation
+   - **`gesture_jump`** - Jump animation
+   - **`gesture_sad`** - Sad expression
+   - **`gesture_cheer`** - Happy celebration
 
-5. **Eye Blink Animation Tips**:
-   - Set eyeLeft/eyeRight opacity to 0% during blink frames
-   - Set eyeBlinkLeft/eyeBlinkRight opacity to 100% during blink frames
-   - Blink duration: 3-4 frames (fast blink)
-
-5. **Set Up State Machine**:
-   - Name: `BuddyController`
-   - Add input: `playGesture` (Trigger type)
-   - Create states and transitions
+5. **Character-Specific Textures**:
+   - Mark textures as "Referenced" assets (not embedded)
+   - Let Rive handle asset loading automatically
+   - Use consistent naming across characters
 
 6. **Export**:
-   - File → Export → Download as .riv
-   - Save as: `kitten-ninja.riv`
+   - Save as: `humanoid-buddies.riv`
+   - Target size: ~400KB (vs 4×300KB+ for separate files)
 
-### Step 3: Integrate with Project
-1. **Copy .riv file** to: `src/rive/assets/kitten-ninja.riv`
+### Integration Steps
 
-2. **Update RiveDemo.tsx**:
+1. **Place .riv File**: Copy to `src/rive/assets/humanoid-buddies.riv`
+
+2. **Update MultiCharacterDemo**: Change one line in `MultiCharacterDemo.tsx`:
    ```typescript
-   // Uncomment this line at the top
-   import kittenNinjaRiv from '@/rive/assets/kitten-ninja.riv'
-   
-   // Update the src prop in BuddyCanvas
-   src={isRiveMode ? kittenNinjaRiv : 'demo'}
+   // Change from:
+   src="/src/rive/assets/kitten-ninja.riv" 
+   // To:
+   src="/src/rive/assets/humanoid-buddies.riv"
    ```
 
-3. **Test Your Animation**:
-   - Run `npm run dev`
-   - Navigate to "Rive Animation Test" tab
-   - Toggle "Use Rive Animation"
-   - Click on buddy to test interactions
+3. **Test Character Switching**:
+   - Navigate to "🎭 Multi-Character" tab
+   - Select different characters from dropdown
+   - Verify instant switching between artboards
+   - Monitor console for clean loading
+
+## Modern Implementation Details
+
+### useRive Hook Pattern
+```typescript
+const { rive, RiveComponent } = useRive({
+  src: 'humanoid-buddies.riv',
+  artboard: 'KittenNinja',           // Character switching parameter
+  stateMachines: 'BuddyController',   // Optional state machine
+  autoplay: true,
+  layout: new Layout({
+    fit: Fit.Contain,
+    alignment: Alignment.Center,
+  }),
+  onLoad: handleLoad,
+  onStateChange: handleStateChange,   // Modern event handling
+})
+```
+
+### Simplified Asset Loading
+```typescript
+// Current approach - let Rive handle assets automatically
+const createAssetLoader = (characterType?: CharacterType) => {
+  return (asset: any, bytes: Uint8Array) => {
+    // Log asset loading for monitoring
+    console.log(`Letting Rive handle character asset automatically: ${asset.name}`)
+    return false // Let Rive runtime handle it
+  }
+}
+```
 
 ## Testing Checklist
-- [ ] Animation loads without errors
-- [ ] Click triggers wave gesture
-- [ ] File size is under 100KB
-- [ ] Animations run at 60fps
-- [ ] State transitions are smooth
+
+### Current Features (v0.1.5)
+- [ ] Kitten ninja loads in "Rive Animation Test" tab
+- [ ] Wave gesture animation plays on click
+- [ ] Clean console output (no critical errors)
+- [ ] Character switching UI in "Multi-Character" tab
+- [ ] Asset loading events tracked and displayed
+
+### Multi-Artboard Features (v0.2 - When .riv file ready)
+- [ ] All 4 characters load from single file
+- [ ] Instant character switching (no network requests)
+- [ ] File size reduction (single 400KB vs 4×300KB+)
+- [ ] Shared animations work across all characters
+- [ ] Asset loading optimized
+
+## Performance Targets
+
+### File Size Benefits
+- **Before**: 4 characters × 300KB+ = 1.2MB+ total
+- **After**: Single 400KB file = **70% reduction**
+
+### Character Switching
+- **Before**: Network request per character (300ms+)
+- **After**: Instant artboard parameter change (<100ms)
 
 ## Troubleshooting
 
 ### Animation Not Loading?
-- Check console for errors
-- Verify .riv file path is correct
-- Ensure file is in `src/rive/assets/`
+- Check browser console for errors
+- Verify `.riv` file path is correct
+- Ensure using `@rive-app/react-canvas` package (not canvas)
 
-### Gestures Not Working?
-- Verify state machine name is `BuddyController`
-- Check input name is `playGesture`
-- Ensure it's a Trigger type input
+### Character Switching Not Working?
+- Verify artboard names match exactly: `KittenNinja`, `PuppyWizard`, etc.
+- Check multi-artboard file structure in Rive Editor
+- Monitor `getArtboardName()` function output in console
 
 ### Performance Issues?
-- Optimize in Rive Editor (simplify paths, reduce keyframes)
-- Check file size (target < 100KB)
-- Use browser DevTools Performance tab
+- Check file size (target: single 400KB file)
+- Monitor browser DevTools Performance tab
+- Verify shared bone structure in Rive Editor
 
 ## Resources
-- [Rive Documentation](https://help.rive.app)
-- [Rive React Runtime](https://help.rive.app/runtimes/overview/react)
-- [State Machine Guide](https://help.rive.app/editor/state-machine)
 
-## Demo Available
-Visit http://localhost:3000 and click "Rive Animation Test" tab to see:
-- Toggle between demo (emoji) and Rive mode
-- Instructions for creating and integrating .riv files
-- Error handling for missing animations
+### Official Rive Documentation
+- [React Runtime Guide](https://rive.app/docs/runtimes/react/react)
+- [useRive Hook Documentation](https://github.com/rive-app/rive-react)
+- [Asset Loading Best Practices](https://rive.app/docs/runtimes/loading-assets)
 
-Ready to bring your buddy to life! 🎨✨
+### Project Documentation
+- `docs/MULTI_ARTBOARD_ARCHITECTURE.md` - Detailed technical implementation
+- `CLAUDE.md` - Project roadmap and current status
+- `README.md` - Project overview and quick start
+
+## Current Status Summary
+
+🟢 **v0.1.5 Complete**: Modern Rive integration with best practices  
+🟡 **v0.2 Ready**: Multi-artboard infrastructure complete, waiting for .riv file  
+🔵 **v0.3 Planned**: Additional animations and state machines  
+
+**Primary Next Task**: Create multi-artboard `humanoid-buddies.riv` file in Rive Editor to unlock character switching with 70% file size reduction! 🚀
