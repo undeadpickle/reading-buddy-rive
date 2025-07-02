@@ -39,6 +39,17 @@ const MultiCharacterDemo: React.FC = () => {
     return names[characterType]
   }
 
+  const getArtboardName = (characterType: CharacterType): string => {
+    // Map character types to artboard names for multi-artboard file
+    const artboardNames = {
+      [CharacterType.KittenNinja]: 'KittenNinja',
+      [CharacterType.PuppyWizard]: 'PuppyWizard',
+      [CharacterType.BearKnight]: 'BearKnight', 
+      [CharacterType.DragonMage]: 'DragonMage'
+    }
+    return artboardNames[characterType]
+  }
+
   const assetStats = {
     total: assetEvents.length,
     successful: assetEvents.filter(e => e.success).length,
@@ -121,6 +132,22 @@ const MultiCharacterDemo: React.FC = () => {
         </div>
       )}
 
+      {/* Implementation Status */}
+      <div style={{ 
+        marginBottom: '20px',
+        padding: '15px',
+        backgroundColor: '#fff3cd',
+        border: '1px solid #ffeaa7',
+        borderRadius: '4px'
+      }}>
+        <h4 style={{ margin: '0 0 10px 0' }}>🚧 Implementation Status</h4>
+        <p style={{ margin: '0', fontSize: '14px' }}>
+          <strong>Current:</strong> Using single kitten-ninja.riv file for all characters (artboard parameter ignored)<br/>
+          <strong>Ready For:</strong> Multi-artboard humanoid-buddies.riv file - code infrastructure complete!<br/>
+          <strong>Next Step:</strong> Create multi-artboard .riv file in Rive Editor with KittenNinja, PuppyWizard, BearKnight, DragonMage artboards
+        </p>
+      </div>
+
       {/* Character Display */}
       <div style={{ 
         display: 'flex', 
@@ -130,8 +157,8 @@ const MultiCharacterDemo: React.FC = () => {
         alignItems: 'center'
       }}>
         <RiveBuddy
-          src="/src/rive/assets/humanoid-buddies.riv" 
-          artboard={currentCharacter}
+          src="/src/rive/assets/kitten-ninja.riv" 
+          artboard={getArtboardName(currentCharacter)}
           characterType={currentCharacter}
           width={300}
           height={300}
