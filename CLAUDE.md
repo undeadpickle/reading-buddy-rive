@@ -5,9 +5,9 @@ A web-based kids' reading platform featuring an animated "Buddy System" built wi
 
 **Current Status**: ✅ **RIVE BEST PRACTICES IMPLEMENTED** - Complete migration to official Rive React integration! Kitten ninja character loads using useRive hook, follows latest Rive documentation standards, and provides robust error handling with proper fallbacks.
 
-**Repository**: 🔒 Private GitHub repo at https://github.com/travisgregory/reading-buddy-rive
+**Repository**: 📖 Public GitHub repo at https://github.com/undeadpickle/reading-buddy-rive
 - Git initialized and all code committed
-- Authentication configured with personal access token
+- Latest Rive best practices implementation pushed
 - Ready for collaborative development
 
 ## Documentation
