@@ -34,8 +34,8 @@ const BuddyCanvas: React.FC<BuddyCanvasProps> = ({
   // Check if src is a .riv file
   const isRiveFile = src.endsWith('.riv')
   
-  // Use first state machine if provided, otherwise default
-  const stateMachine = stateMachines?.[0] || 'BuddyController'
+  // Use first state machine if provided, otherwise let Rive auto-detect
+  const stateMachine = stateMachines?.[0]
   const containerStyle: React.CSSProperties = {
     width: width || '100%',
     height: height || '100%',
@@ -97,7 +97,7 @@ const BuddyCanvas: React.FC<BuddyCanvasProps> = ({
         <RiveBuddy
           src={src}
           artboard={artboard}
-          stateMachine={stateMachine}
+          stateMachines={stateMachine}
           autoplay={autoplay}
           width={width}
           height={height}

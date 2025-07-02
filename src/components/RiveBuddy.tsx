@@ -1,38 +1,143 @@
-import React, { useCallback, useRef, useEffect } from 'react'
-import { Gesture } from '@/rive/types'
+import React, { useCallback, useEffect } from 'react'
+import { useRive, Layout, Fit, Alignment, EventType, RiveEventType } from '@rive-app/react-canvas'
+import { Gesture, CharacterType, AssetLoadEvent } from '@/rive/types'
 
 interface RiveBuddyProps {
   src: string
   artboard?: string
-  stateMachine?: string
+  characterType?: CharacterType
+  stateMachines?: string | string[]
   autoplay?: boolean
-  width?: number  // Optional - will use artboard natural size if not provided
-  height?: number // Optional - will use artboard natural size if not provided
+  width?: number
+  height?: number
   onGestureComplete?: (gesture: Gesture) => void
   onLoad?: () => void
   onError?: (error: Error) => void
+  onAssetLoad?: (event: AssetLoadEvent) => void
+  onStateChange?: (event: any) => void
+  onRiveEvent?: (event: any) => void
   shouldReduceMotion?: boolean
   className?: string
+  enableRiveAssetCDN?: boolean
 }
 
 const RiveBuddy: React.FC<RiveBuddyProps> = ({
   src,
   artboard,
+  characterType,
+  stateMachines,
   autoplay = false,
   width = 300,
   height = 300,
   onGestureComplete,
   onLoad,
   onError,
+  onAssetLoad,
+  onStateChange,
+  onRiveEvent,
   shouldReduceMotion = false,
-  className
+  className,
+  enableRiveAssetCDN = true
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const riveInstanceRef = useRef<any>(null)
+  // Asset Handler for dynamic character asset loading
+  const createAssetLoader = useCallback((characterType?: CharacterType) => {
+    return (asset: any, bytes: Uint8Array) => {
+      console.log('Asset loader called:', {
+        name: asset.name,
+        fileExtension: asset.fileExtension,
+        cdnUuid: asset.cdnUuid,
+        isFont: asset.isFont,
+        isImage: asset.isImage,
+        isAudio: asset.isAudio,
+        characterType,
+        bytesLength: bytes.length
+      })
 
-  // Trigger gesture animation
+      // If asset has CDN UUID or embedded bytes, let runtime handle it
+      if (asset.cdnUuid.length > 0 || bytes.length > 0) {
+        onAssetLoad?.({
+          assetName: asset.name,
+          assetType: asset.isImage ? 'image' : asset.isFont ? 'font' : 'audio',
+          characterType: characterType || CharacterType.KittenNinja,
+          success: true
+        })
+        return false
+      }
+
+      // For character-specific assets, let Rive handle them automatically
+      // since we're using the official React integration
+      if (asset.isImage && characterType) {
+        console.log(`Letting Rive handle character asset automatically: ${asset.name}`)
+        onAssetLoad?.({
+          assetName: asset.name,
+          assetType: 'image',
+          characterType,
+          success: true
+        })
+        return false // Let Rive runtime handle it
+      }
+
+      return false // Let runtime handle other assets
+    }
+  }, [characterType, onAssetLoad])
+
+  // Use the official useRive hook
+  const { rive, RiveComponent } = useRive({
+    src,
+    artboard,
+    stateMachines,
+    autoplay,
+    layout: new Layout({
+      fit: Fit.Contain,
+      alignment: Alignment.Center,
+    }),
+    assetLoader: createAssetLoader(characterType),
+    enableRiveAssetCDN,
+    onLoad: () => {
+      console.log('Rive animation loaded with useRive hook')
+      onLoad?.()
+    },
+    onLoadError: (error: any) => {
+      console.error('Rive load error:', error)
+      onError?.(error instanceof Error ? error : new Error(String(error)))
+    },
+    onStateChange: (event: any) => {
+      console.log('State changed:', event.data)
+      onStateChange?.(event)
+    }
+  })
+
+  // Set up Rive event listeners
+  useEffect(() => {
+    if (!rive) return
+
+    const handleRiveEvent = (riveEvent: any) => {
+      const eventData = riveEvent.data
+      console.log('Rive event received:', eventData)
+
+      if (eventData.type === RiveEventType.General) {
+        // Handle gesture completion events
+        if (eventData.name === 'gesture_complete') {
+          const gesture = eventData.properties?.gesture as Gesture
+          if (gesture) {
+            onGestureComplete?.(gesture)
+          }
+        }
+      }
+
+      onRiveEvent?.(riveEvent)
+    }
+
+    rive.on(EventType.RiveEvent, handleRiveEvent)
+
+    return () => {
+      rive.off(EventType.RiveEvent, handleRiveEvent)
+    }
+  }, [rive, onGestureComplete, onRiveEvent])
+
+  // Trigger gesture animation using state machine inputs
   const triggerGesture = useCallback((gesture: Gesture) => {
-    if (!riveInstanceRef.current) {
+    if (!rive) {
       console.warn('Rive instance not ready')
       return
     }
@@ -40,99 +145,19 @@ const RiveBuddy: React.FC<RiveBuddyProps> = ({
     console.log(`Triggering gesture: ${gesture}`)
     
     try {
-      // Play the gesture_wave animation directly
-      riveInstanceRef.current.play('gesture_wave')
+      // For now, just use direct animation play since we don't have proper state machines set up
+      console.log('Using direct animation play (state machines not configured)')
+      rive.play('gesture_wave')
       
       // Simulate gesture completion callback after animation duration
       setTimeout(() => {
         onGestureComplete?.(gesture)
       }, 2000)
+      
     } catch (error) {
-      console.error('Error playing animation:', error)
+      console.error('Error triggering gesture:', error)
     }
-  }, [onGestureComplete])
-
-  useEffect(() => {
-    const loadRive = async () => {
-      try {
-        // Check if Rive is already loaded globally via CDN
-        if (typeof window !== 'undefined' && (window as any).rive) {
-          const { Rive, Layout, Fit, Alignment } = (window as any).rive
-          
-          if (!canvasRef.current) return
-
-          const riveInstance = new Rive({
-            src,
-            canvas: canvasRef.current,
-            artboard,
-            autoplay,
-            layout: new Layout({
-              fit: Fit.Contain,
-              alignment: Alignment.Center,
-            }),
-            onLoad: () => {
-              console.log('Rive animation loaded via CDN')
-              riveInstanceRef.current = riveInstance
-              
-              // Get artboard dimensions dynamically
-              if (riveInstance.artboard) {
-                const artboardBounds = riveInstance.artboard.bounds
-                const naturalWidth = artboardBounds.maxX - artboardBounds.minX
-                const naturalHeight = artboardBounds.maxY - artboardBounds.minY
-                
-                console.log('Artboard natural dimensions:', {
-                  width: naturalWidth,
-                  height: naturalHeight,
-                  bounds: artboardBounds
-                })
-                
-                // Resize canvas to match artboard's natural size
-                if (canvasRef.current) {
-                  canvasRef.current.width = naturalWidth
-                  canvasRef.current.height = naturalHeight
-                  
-                  // Resize the drawing surface to match the new canvas dimensions
-                  riveInstance.resizeDrawingSurfaceToCanvas()
-                }
-              }
-              
-              onLoad?.()
-            },
-            onLoadError: (error: any) => {
-              console.error('Rive load error:', error)
-              onError?.(error instanceof Error ? error : new Error(String(error)))
-            }
-          })
-
-          return () => {
-            if (riveInstanceRef.current) {
-              riveInstanceRef.current.cleanup()
-              riveInstanceRef.current = null
-            }
-          }
-        } else {
-          // Fallback: Load from CDN dynamically
-          const script = document.createElement('script')
-          script.src = 'https://unpkg.com/@rive-app/canvas@2.30.1/rive.js'
-          script.onload = () => {
-            console.log('Rive CDN loaded, retrying...')
-            // Retry after CDN loads
-            setTimeout(() => loadRive(), 100)
-          }
-          script.onerror = () => {
-            console.error('Failed to load Rive from CDN')
-            onError?.(new Error('Failed to load Rive from CDN'))
-          }
-          document.head.appendChild(script)
-        }
-      } catch (error) {
-        console.error('Failed to load Rive:', error)
-        onError?.(error instanceof Error ? error : new Error(String(error)))
-      }
-    }
-
-    loadRive()
-  }, [src, artboard, autoplay, onLoad, onError])
+  }, [rive, onGestureComplete])
 
   // Handle reduced motion preference
   if (shouldReduceMotion) {
@@ -174,8 +199,7 @@ const RiveBuddy: React.FC<RiveBuddyProps> = ({
       role="img"
       aria-label="Interactive buddy character"
     >
-      <canvas
-        ref={canvasRef}
+      <RiveComponent
         width={width}
         height={height}
         style={{

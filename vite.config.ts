@@ -17,7 +17,7 @@ export default defineConfig({
   },
   assetsInclude: ['**/*.riv'],
   optimizeDeps: {
-    exclude: ['@rive-app/canvas']
+    // No exclusions needed for react-canvas
   },
   build: {
     target: 'es2020',

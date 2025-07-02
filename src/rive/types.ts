@@ -21,9 +21,17 @@ export enum BuddyState {
   Sleeping = 'sleeping',
 }
 
+export enum CharacterType {
+  KittenNinja = 'kitten-ninja',
+  PuppyWizard = 'puppy-wizard',
+  BearKnight = 'bear-knight',
+  DragonMage = 'dragon-mage',
+}
+
 export interface BuddyConfig {
   id: string
   name: string
+  characterType: CharacterType
   artboardName: string
   stateMachineName: string
   rivFilePath: string
@@ -65,6 +73,27 @@ export interface RiveLoadConfig {
   autoplay?: boolean
   onLoad?: () => void
   onError?: (error: Error) => void
+}
+
+export interface MultiArtboardConfig {
+  filePath: string // 'humanoid-buddies.riv'
+  characters: Record<CharacterType, {
+    artboardName: string
+    stateMachineName: string
+    assetMappings?: Record<string, string> // For character-specific textures
+  }>
+  sharedAssets: {
+    baseTextures: string[]
+    animations: string[]
+    stateMachines: string[]
+  }
+}
+
+export interface AssetLoadEvent {
+  assetName: string
+  assetType: 'image' | 'font' | 'audio'
+  characterType: CharacterType
+  success: boolean
 }
 
 export interface BuddyInteractionEvent {

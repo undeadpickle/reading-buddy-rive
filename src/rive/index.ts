@@ -18,8 +18,9 @@ class RiveLoader {
     if (this.riveModule) return
 
     try {
-      const rive = await import('@rive-app/react-canvas')
-      this.riveModule = rive
+      // Import the core Rive class from react-canvas
+      const { Rive } = await import('@rive-app/react-canvas')
+      this.riveModule = { Rive }
     } catch (error) {
       console.error('Failed to load Rive module:', error)
       throw new Error('Rive module could not be loaded')

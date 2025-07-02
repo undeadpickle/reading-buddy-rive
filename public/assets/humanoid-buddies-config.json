@@ -1,0 +1,71 @@
+{
+  "filePath": "humanoid-buddies.riv",
+  "version": "1.0.0",
+  "description": "Multi-artboard configuration for shared humanoid buddy characters",
+  "characters": {
+    "kitten-ninja": {
+      "artboardName": "KittenNinja",
+      "stateMachineName": "EmotionSM",
+      "displayName": "Kitten Ninja",
+      "assetMappings": {
+        "character-skin": "kitten-skin.png",
+        "character-eyes": "kitten-eyes.png",
+        "character-outfit": "ninja-outfit.png"
+      }
+    },
+    "puppy-wizard": {
+      "artboardName": "PuppyWizard", 
+      "stateMachineName": "EmotionSM",
+      "displayName": "Puppy Wizard",
+      "assetMappings": {
+        "character-skin": "puppy-skin.png",
+        "character-eyes": "puppy-eyes.png",
+        "character-outfit": "wizard-robe.png"
+      }
+    },
+    "bear-knight": {
+      "artboardName": "BearKnight",
+      "stateMachineName": "EmotionSM", 
+      "displayName": "Bear Knight",
+      "assetMappings": {
+        "character-skin": "bear-skin.png",
+        "character-eyes": "bear-eyes.png",
+        "character-outfit": "knight-armor.png"
+      }
+    },
+    "dragon-mage": {
+      "artboardName": "DragonMage",
+      "stateMachineName": "EmotionSM",
+      "displayName": "Dragon Mage",
+      "assetMappings": {
+        "character-skin": "dragon-scales.png",
+        "character-eyes": "dragon-eyes.png", 
+        "character-outfit": "mage-cloak.png"
+      }
+    }
+  },
+  "sharedAssets": {
+    "baseTextures": [
+      "body-base.png",
+      "face-base.png", 
+      "limb-base.png"
+    ],
+    "animations": [
+      "idle",
+      "wave", 
+      "jump",
+      "sad",
+      "cheer",
+      "hatch"
+    ],
+    "stateMachines": [
+      "EmotionSM",
+      "InteractionSM"
+    ]
+  },
+  "performance": {
+    "expectedFileSizeKB": 400,
+    "characterSwitchTimeMs": 100,
+    "sharedAssetPercentage": 75
+  }
+}

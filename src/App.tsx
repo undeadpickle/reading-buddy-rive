@@ -8,6 +8,7 @@ import './App.css'
 // Lazy load the BuddyCanvas for better performance
 const BuddyCanvas = React.lazy(() => import('@/components/BuddyCanvas'))
 const RiveDemo = React.lazy(() => import('@/components/RiveDemo'))
+const MultiCharacterDemo = React.lazy(() => import('@/components/MultiCharacterDemo'))
 
 function BuddyDemo() {
   const { 
@@ -124,7 +125,7 @@ function BuddyDemo() {
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'demo' | 'rive'>('demo')
+  const [activeTab, setActiveTab] = useState<'demo' | 'rive' | 'multi'>('demo')
 
   return (
     <RiveProvider>
@@ -173,11 +174,29 @@ function App() {
           >
             Rive Animation Test
           </button>
+          <button
+            onClick={() => setActiveTab('multi')}
+            style={{
+              padding: '10px 20px',
+              background: activeTab === 'multi' ? '#007bff' : 'transparent',
+              color: activeTab === 'multi' ? 'white' : '#333',
+              border: 'none',
+              borderBottom: activeTab === 'multi' ? '3px solid #0056b3' : 'none',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: activeTab === 'multi' ? 'bold' : 'normal',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            🎭 Multi-Character
+          </button>
         </div>
 
         <main>
           <Suspense fallback={<div style={{ textAlign: 'center', padding: '40px' }}>Loading...</div>}>
-            {activeTab === 'demo' ? <BuddyDemo /> : <RiveDemo />}
+            {activeTab === 'demo' && <BuddyDemo />}
+            {activeTab === 'rive' && <RiveDemo />}
+            {activeTab === 'multi' && <MultiCharacterDemo />}
           </Suspense>
         </main>
       </div>

@@ -4,7 +4,10 @@ import {
   AccessoryConfig, 
   BuddyState, 
   RiveInstanceRef,
-  BuddyInteractionEvent 
+  BuddyInteractionEvent,
+  CharacterType,
+  MultiArtboardConfig,
+  AssetLoadEvent
 } from '@/rive/types'
 
 export class BuddyManager {
@@ -13,10 +16,13 @@ export class BuddyManager {
   private currentState: BuddyState = BuddyState.Egg
   private equippedAccessories: Set<string> = new Set()
   private interactionHistory: BuddyInteractionEvent[] = []
+  private multiArtboardConfig: MultiArtboardConfig | null = null
+  private assetLoadEvents: AssetLoadEvent[] = []
 
   constructor(
     private riveLoader: { loadRive: (config: any) => Promise<RiveInstanceRef> },
-    private onStateChange?: (state: BuddyState) => void
+    private onStateChange?: (state: BuddyState) => void,
+    private onAssetLoad?: (event: AssetLoadEvent) => void
   ) {}
 
   async load(buddyId: string): Promise<void> {
@@ -24,9 +30,15 @@ export class BuddyManager {
       const config = await this.fetchBuddyConfig(buddyId)
       this.buddyConfig = config
 
+      // Load multi-artboard config if buddy uses shared humanoid file
+      if (config.rivFilePath.includes('humanoid-buddies.riv')) {
+        this.multiArtboardConfig = await this.fetchMultiArtboardConfig()
+      }
+
       this.riveInstance = await this.riveLoader.loadRive({
         src: config.rivFilePath,
         artboard: config.artboardName,
+        characterType: config.characterType,
         stateMachines: [config.stateMachineName],
         onLoad: () => {
           this.currentState = BuddyState.Active
@@ -35,11 +47,100 @@ export class BuddyManager {
         onError: (error: Error) => {
           console.error(`Failed to load buddy ${buddyId}:`, error)
           throw error
+        },
+        onAssetLoad: (event: AssetLoadEvent) => {
+          this.handleAssetLoad(event)
         }
       })
     } catch (error) {
       console.error('BuddyManager load failed:', error)
       throw error
+    }
+  }
+
+  async switchCharacter(characterType: CharacterType): Promise<void> {
+    if (!this.multiArtboardConfig) {
+      console.warn('Cannot switch character: Multi-artboard config not loaded')
+      return
+    }
+
+    if (!this.buddyConfig) {
+      console.warn('Cannot switch character: Buddy config not loaded')
+      return
+    }
+
+    const characterConfig = this.multiArtboardConfig.characters[characterType]
+    if (!characterConfig) {
+      console.error(`Character type ${characterType} not found in multi-artboard config`)
+      return
+    }
+
+    try {
+      // Update buddy config
+      this.buddyConfig.characterType = characterType
+      this.buddyConfig.artboardName = characterConfig.artboardName
+      
+      // Reload with new artboard
+      await this.cleanup()
+      await this.load(this.buddyConfig.id)
+      
+      this.emitAnalyticsEvent('character_switched', {
+        buddyId: this.buddyConfig.id,
+        fromCharacter: this.buddyConfig.characterType,
+        toCharacter: characterType
+      })
+    } catch (error) {
+      console.error('Failed to switch character:', error)
+      throw error
+    }
+  }
+
+  private handleAssetLoad(event: AssetLoadEvent): void {
+    this.assetLoadEvents.push(event)
+    this.onAssetLoad?.(event)
+    
+    if (!event.success) {
+      console.warn(`Asset load failed: ${event.assetName} for ${event.characterType}`)
+    }
+  }
+
+  private async fetchMultiArtboardConfig(): Promise<MultiArtboardConfig> {
+    try {
+      const response = await fetch('/public/assets/humanoid-buddies-config.json')
+      if (!response.ok) {
+        throw new Error(`Failed to fetch multi-artboard config: ${response.statusText}`)
+      }
+      return await response.json()
+    } catch (error) {
+      console.error('Failed to fetch multi-artboard config:', error)
+      
+      // Return fallback config
+      return {
+        filePath: 'humanoid-buddies.riv',
+        characters: {
+          [CharacterType.KittenNinja]: {
+            artboardName: 'KittenNinja',
+            stateMachineName: 'EmotionSM'
+          },
+          [CharacterType.PuppyWizard]: {
+            artboardName: 'PuppyWizard',
+            stateMachineName: 'EmotionSM'
+          },
+          [CharacterType.BearKnight]: {
+            artboardName: 'BearKnight',
+            stateMachineName: 'EmotionSM'
+          },
+          [CharacterType.DragonMage]: {
+            artboardName: 'DragonMage',
+            stateMachineName: 'EmotionSM'
+          }
+        },
+        sharedAssets: {
+          baseTextures: ['body-base.png', 'face-base.png'],
+          animations: ['idle', 'wave', 'jump', 'sad', 'cheer'],
+          stateMachines: ['EmotionSM', 'InteractionSM']
+        }
+      }
     }
   }
 
@@ -146,6 +247,27 @@ export class BuddyManager {
     return this.interactionHistory.filter(event => event.timestamp > cutoff).length
   }
 
+  getCharacterType(): CharacterType | null {
+    return this.buddyConfig?.characterType || null
+  }
+
+  getAvailableCharacters(): CharacterType[] {
+    if (!this.multiArtboardConfig) return []
+    return Object.keys(this.multiArtboardConfig.characters) as CharacterType[]
+  }
+
+  getAssetLoadStatus(): { total: number; successful: number; failed: number } {
+    const total = this.assetLoadEvents.length
+    const successful = this.assetLoadEvents.filter(event => event.success).length
+    const failed = total - successful
+    
+    return { total, successful, failed }
+  }
+
+  isMultiArtboardEnabled(): boolean {
+    return this.multiArtboardConfig !== null
+  }
+
   cleanup(): void {
     if (this.riveInstance) {
       this.riveInstance.cleanup()
@@ -155,6 +277,8 @@ export class BuddyManager {
     this.currentState = BuddyState.Egg
     this.equippedAccessories.clear()
     this.interactionHistory = []
+    this.assetLoadEvents = []
+    // Keep multiArtboardConfig for reuse
   }
 
   private async fetchBuddyConfig(buddyId: string): Promise<BuddyConfig> {
@@ -175,6 +299,7 @@ export class BuddyManager {
     return {
       id: buddyId,
       name: 'Default Buddy',
+      characterType: CharacterType.KittenNinja,
       artboardName: 'DefaultBuddy',
       stateMachineName: 'EmotionSM',
       rivFilePath: '/rive/buddies.riv',

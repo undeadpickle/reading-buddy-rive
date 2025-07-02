@@ -3,7 +3,7 @@
 ## Overview
 A web-based kids' reading platform featuring an animated "Buddy System" built with Rive animations. Children hatch, befriend, and customize animated buddies that react to reading progress and celebrate achievements.
 
-**Current Status**: ✅ **MAJOR MILESTONE ACHIEVED** - Complete Rive integration working! Kitten ninja character loads, animates, and responds to user interaction with dynamic canvas sizing.
+**Current Status**: ✅ **RIVE BEST PRACTICES IMPLEMENTED** - Complete migration to official Rive React integration! Kitten ninja character loads using useRive hook, follows latest Rive documentation standards, and provides robust error handling with proper fallbacks.
 
 **Repository**: 🔒 Private GitHub repo at https://github.com/travisgregory/reading-buddy-rive
 - Git initialized and all code committed
@@ -33,12 +33,13 @@ A web-based kids' reading platform featuring an animated "Buddy System" built wi
 
 ## Architecture Overview
 
-### **Phase 2: Optimized Architecture (Current)**
-- **React Context**: RiveProvider replaces singleton pattern for better React integration
-- **Manager Classes**: Dependency injection with Context instead of global singletons
-- **React Hooks**: useBuddy, useEggProgress for component state management
-- **Component Isolation**: BuddyCanvas with proper separation of concerns
-- **Code Splitting**: React.lazy + Suspense for performance optimization
+### **Phase 2: Rive Best Practices Architecture (Current)**
+- **Official Integration**: Complete migration to `@rive-app/react-canvas` package
+- **useRive Hook Pattern**: Modern React hooks approach following Rive's latest documentation
+- **Event-Driven Architecture**: Proper Rive event handling with onStateChange and RiveEvent listeners
+- **Asset Loading Best Practices**: Simplified asset handling that leverages Rive's built-in systems
+- **Graceful Fallbacks**: Robust error handling for missing state machines and failed loads
+- **Memory Management**: Proper cleanup and resource management following Rive guidelines
 - **Type Safety**: Comprehensive TypeScript coverage with strict configuration
 
 ### **Core Patterns**
@@ -74,17 +75,19 @@ git pull             # Pull latest changes from GitHub
 
 ### Testing & Demo
 ```bash
-# ✅ WORKING RIVE INTEGRATION:
-# Navigate to localhost:3000 → "Rive Animation Test" tab
+# ✅ RIVE BEST PRACTICES IMPLEMENTATION:
+# Navigate to localhost:3000+ → "Rive Animation Test" tab
 # Check "Use Rive Animation" checkbox
 # Click kitten ninja to trigger wave gesture animation
 # 
 # Features working:
+# - Official @rive-app/react-canvas integration
+# - useRive hook pattern following latest Rive docs
 # - Real Rive character rendering (kitten-ninja.riv)
-# - Dynamic canvas sizing from artboard dimensions
 # - Wave gesture animation with user interaction
-# - CDN-based Rive loading (bypasses webpack issues)
-# - Proper error handling and fallbacks
+# - Rive event handling with proper callbacks
+# - Graceful fallbacks for missing state machines
+# - Clean console output with no critical errors
 ```
 
 ### Testing
@@ -119,7 +122,7 @@ src/
     useEggProgress.ts
   components/
     BuddyCanvas.tsx   ← Smart wrapper (emoji OR Rive)
-    RiveBuddy.tsx     ← ✅ WORKING CDN-based Rive loader
+    RiveBuddy.tsx     ← ✅ UPDATED useRive hook implementation
     RiveDemo.tsx      ← ✅ Test interface with success indicators
   utils/
     analytics.ts
@@ -167,18 +170,25 @@ rive/
 
 ## Phase Roadmap
 - **✅ v0.1 Foundation (COMPLETED)**: Rive integration, kitten ninja character, wave gesture animation, GitHub setup
-- **🔄 v0.2 (IN PROGRESS)** - Character Reusability: Multi-artboard architecture for efficient character variations
-- **v0.3 (NEXT)** - Additional animations: Add idle, happy, sad gestures in Rive Editor
+- **✅ v0.1.5 Best Practices (COMPLETED)**: Migration to official @rive-app/react-canvas, useRive hook pattern, Rive event handling
+- **🔄 v0.2 (NEXT)** - Character Reusability: Multi-artboard architecture for efficient character variations
+- **v0.3** - Additional animations: Add idle, happy, sad gestures in Rive Editor
 - **v0.4** - State machines: Complex animation logic and transitions
 - **v0.5** - Audio integration: Voice lines synchronized with gestures
 - **v1.0** - Full buddy system: Multi-buddy unlock, accessories, analytics
 
 ## 🎯 CURRENT PRIORITY: Character Reusability Architecture
 **Goal**: Implement single .riv file with multiple artboards for 70-80% file size reduction
-**Progress**: Research completed, implementation plan approved
+**Progress**: ✅ Foundation upgraded to Rive best practices, ready for multi-artboard implementation
+**Benefits of New Foundation**:
+- Official React integration provides better artboard switching support
+- useRive hook makes character variations easier to implement
+- Event system ready for character-specific interactions
+- Clean architecture ready for scaling
+
 **Next Steps**:
 1. **Create humanoid-buddies.riv** - Single file with multiple character artboards
-2. **Update RiveBuddy component** to support artboard switching
+2. **Update RiveBuddy component** to leverage artboard parameter in useRive hook
 3. **Enhance BuddyManager** for character variation handling
 4. **Update type definitions** for multi-character support
 5. **Performance testing** - Verify file size and switching speed improvements

@@ -30,9 +30,10 @@ export function RiveProvider({ children }: RiveProviderProps): React.ReactElemen
     if (riveModuleRef.current) return riveModuleRef.current
 
     try {
-      const rive = await import('@rive-app/react-canvas')
-      riveModuleRef.current = rive
-      return rive
+      // Import the core Rive class from react-canvas
+      const { Rive } = await import('@rive-app/react-canvas')
+      riveModuleRef.current = { Rive }
+      return riveModuleRef.current
     } catch (error) {
       console.error('Failed to load Rive module:', error)
       throw new Error('Rive module could not be loaded')

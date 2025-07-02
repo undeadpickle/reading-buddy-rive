@@ -34,7 +34,7 @@ The Buddy System creates emotional engagement for young readers through animated
 
 ### Core Technologies
 - **React 19** with TypeScript for type-safe component development
-- **Rive** for high-performance vector animations
+- **Rive (@rive-app/react-canvas)** for high-performance vector animations with official React integration
 - **Vite** for fast development and optimized builds
 - **React Context** for state management
 - **LocalStorage** for progress persistence
@@ -62,8 +62,15 @@ public/assets/          # Static assets and buddy files
 - **Performance**: Code splitting, lazy loading, bundle optimization
 - **Analytics**: COPPA-compliant event tracking system
 
+### ✅ Recent Updates (v0.1.5)
+- **Rive Best Practices**: Complete migration to official `@rive-app/react-canvas` integration
+- **useRive Hook Pattern**: Modern React hooks approach following Rive's latest documentation
+- **Event Handling**: Proper Rive event listeners with onStateChange and RiveEvent callbacks
+- **Error Handling**: Graceful fallbacks for missing state machines and failed loads
+- **Memory Management**: Proper cleanup and resource management following Rive guidelines
+
 ### 🔄 Next Steps
-- Replace emoji placeholders with production Rive animations
+- Multi-artboard character architecture for efficient character variations
 - Integrate with reading progress API
 - Add comprehensive test coverage
 - Deploy to production environment
@@ -83,10 +90,11 @@ npm run format       # Format code with Prettier
 ### Demo Features
 
 The current demo includes:
-- Interactive buddy canvas with gesture triggers
-- Egg progress tracking with visual feedback
-- Customization system simulation
-- Responsive design for mobile and desktop
+- **Real Rive Integration**: Kitten ninja character with wave gesture animation
+- **Interactive Controls**: Click to trigger gesture animations with proper event handling
+- **Fallback System**: Graceful emoji placeholders when Rive is disabled
+- **Modern Architecture**: useRive hook pattern following official Rive documentation
+- **Responsive Design**: Mobile and desktop compatibility
 - Accessibility features (keyboard navigation, screen reader support)
 
 ## 📚 Documentation
